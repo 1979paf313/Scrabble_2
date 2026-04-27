@@ -1437,9 +1437,9 @@ function beginPendingPress(panelId, source, grabIndex, event) {
   gameState.pendingPressStartY = event.clientY;
   gameState.pendingPressStartTimeMs = performance.now();
 
-  document.addEventListener("pointermove", handlePanelDragMouseMove, true);
-  document.addEventListener("pointerup", handlePanelDragMouseUp, true);
-  document.addEventListener("pointercancel", handlePanelDragMouseUp, true);
+  document.addEventListener("pointermove", handlePendingPressMouseMove, true);
+  document.addEventListener("pointerup", handlePendingPressMouseUp, true);
+  document.addEventListener("pointercancel", handlePendingPressMouseUp, true);
 }
 
 function clearPendingPress() {
@@ -1450,9 +1450,9 @@ function clearPendingPress() {
   gameState.pendingPressStartY = 0;
   gameState.pendingPressStartTimeMs = 0;
 
-  document.addEventListener("pointermove", handlePanelDragMouseMove, true);
-  document.addEventListener("pointerup", handlePanelDragMouseUp, true);
-  document.addEventListener("pointercancel", handlePanelDragMouseUp, true);
+  document.removeEventListener("pointermove", handlePendingPressMouseMove, true);
+  document.removeEventListener("pointerup", handlePendingPressMouseUp, true);
+  document.removeEventListener("pointercancel", handlePendingPressMouseUp, true);
 }
 
 function handlePendingPressMouseMove(event) {
@@ -1705,18 +1705,21 @@ function renderPanelOverlays() {
       overlay.appendChild(segment);
     }
 
-    overlay.addEventListener("pointerdown", (event) => {
-      event.currentTarget.setPointerCapture?.(event.pointerId);
-      if (event.button !== 0) {
-        return;
-      }
+overlay.addEventListener("pointerdown", (event) => {
+  if (event.button !== 0) {
+    return;
+  }
 
-      const clickedLetterIndex = getLetterIndexAtPlacedPanelFromEvent(
-        panel,
-        event,
-      );
-      beginPendingPress(panel.id, "board", clickedLetterIndex, event);
-    });
+  event.preventDefault();
+  event.stopPropagation();
+
+  const clickedLetterIndex = getLetterIndexAtPlacedPanelFromEvent(
+    panel,
+    event,
+  );
+
+  beginPendingPress(panel.id, "board", clickedLetterIndex, event);
+});
 
     overlay.addEventListener("contextmenu", (event) => {
       event.preventDefault();
