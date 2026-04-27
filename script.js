@@ -450,8 +450,9 @@ function startPanelMouseDrag(panelId, source, grabIndex, event) {
   evaluateBoard();
   renderAll();
 
-  document.addEventListener("mousemove", handlePanelDragMouseMove, true);
-  document.addEventListener("mouseup", handlePanelDragMouseUp, true);
+  document.addEventListener("pointermove", handlePanelDragMouseMove, true);
+  document.addEventListener("pointerup", handlePanelDragMouseUp, true);
+  document.addEventListener("pointercancel", handlePanelDragMouseUp, true);
 }
 
 function handlePanelDragMouseMove(event) {
@@ -818,8 +819,9 @@ function clearDragStateOnly() {
   gameState.lastLegalAnchor = null;
   gameState.isTrayHot = false;
 
-  document.removeEventListener("mousemove", handlePanelDragMouseMove, true);
-  document.removeEventListener("mouseup", handlePanelDragMouseUp, true);
+  document.addEventListener("pointermove", handlePanelDragMouseMove, true);
+  document.addEventListener("pointerup", handlePanelDragMouseUp, true);
+  document.addEventListener("pointercancel", handlePanelDragMouseUp, true);
 }
 
 function rebuildBoardFromPanels() {
@@ -1435,8 +1437,9 @@ function beginPendingPress(panelId, source, grabIndex, event) {
   gameState.pendingPressStartY = event.clientY;
   gameState.pendingPressStartTimeMs = performance.now();
 
-  document.addEventListener("mousemove", handlePendingPressMouseMove, true);
-  document.addEventListener("mouseup", handlePendingPressMouseUp, true);
+  document.addEventListener("pointermove", handlePanelDragMouseMove, true);
+  document.addEventListener("pointerup", handlePanelDragMouseUp, true);
+  document.addEventListener("pointercancel", handlePanelDragMouseUp, true);
 }
 
 function clearPendingPress() {
@@ -1447,8 +1450,9 @@ function clearPendingPress() {
   gameState.pendingPressStartY = 0;
   gameState.pendingPressStartTimeMs = 0;
 
-  document.removeEventListener("mousemove", handlePendingPressMouseMove, true);
-  document.removeEventListener("mouseup", handlePendingPressMouseUp, true);
+  document.addEventListener("pointermove", handlePanelDragMouseMove, true);
+  document.addEventListener("pointerup", handlePanelDragMouseUp, true);
+  document.addEventListener("pointercancel", handlePanelDragMouseUp, true);
 }
 
 function handlePendingPressMouseMove(event) {
@@ -1555,8 +1559,9 @@ function startPanelMouseDragFromExistingPointer(
   evaluateBoard();
   renderAll();
 
-  document.addEventListener("mousemove", handlePanelDragMouseMove, true);
-  document.addEventListener("mouseup", handlePanelDragMouseUp, true);
+  document.addEventListener("pointermove", handlePanelDragMouseMove, true);
+  document.addEventListener("pointerup", handlePanelDragMouseUp, true);
+  document.addEventListener("pointercancel", handlePanelDragMouseUp, true);
 }
 
 function handleBoardCellClick(row, col) {
@@ -1700,7 +1705,8 @@ function renderPanelOverlays() {
       overlay.appendChild(segment);
     }
 
-    overlay.addEventListener("mousedown", (event) => {
+    overlay.addEventListener("pointerdown", (event) => {
+      event.currentTarget.setPointerCapture?.(event.pointerId);
       if (event.button !== 0) {
         return;
       }
@@ -1910,7 +1916,8 @@ function renderPanels() {
 
     item.appendChild(piece);
 
-    item.addEventListener("mousedown", (event) => {
+    item.addEventListener("pointerdown", (event) => {
+      event.currentTarget.setPointerCapture?.(event.pointerId);
       if (event.button !== 0) {
         return;
       }
