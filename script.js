@@ -456,6 +456,8 @@ function startPanelMouseDrag(panelId, source, grabIndex, event) {
 }
 
 function handlePanelDragMouseMove(event) {
+  event.preventDefault();
+  event.stopPropagation();
   if (!gameState.isMouseDraggingPanel || gameState.selectedPanelId === null) {
     return;
   }
@@ -1456,6 +1458,8 @@ function clearPendingPress() {
 }
 
 function handlePendingPressMouseMove(event) {
+  event.preventDefault();
+  event.stopPropagation();
   if (gameState.pendingPressPanelId === null) {
     return;
   }
