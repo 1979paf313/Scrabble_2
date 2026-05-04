@@ -182,19 +182,6 @@ function shuffleArray(items) {
   return arr;
 }
 
-function debugTouch(label, event) {
-  console.log(label, {
-    type: event.type,
-    pointerType: event.pointerType,
-    button: event.button,
-    buttons: event.buttons,
-    clientX: event.clientX,
-    clientY: event.clientY,
-    targetClass: event.target?.className,
-    currentTargetClass: event.currentTarget?.className,
-  });
-}
-
 function loadPuzzle(puzzleObj) {
   gameState.puzzle = puzzleObj;
   gameState.allowedWordsSet = new Set(
@@ -514,7 +501,6 @@ function startPanelMouseDrag(panelId, source, grabIndex, event) {
 }
 
 function handlePanelDragMouseMove(event) {
-    debugTouch("DRAG MOVE", event);
   event.preventDefault();
   event.stopPropagation();
   if (!gameState.isMouseDraggingPanel || gameState.selectedPanelId === null) {
@@ -572,7 +558,6 @@ function handlePanelDragMouseMove(event) {
 }
 
 function handlePanelDragMouseUp(event) {
-    debugTouch("DRAG UP", event);
   if (!gameState.isMouseDraggingPanel || gameState.selectedPanelId === null) {
     return;
   }
@@ -1511,7 +1496,6 @@ function handleBoardMouseLeave() {
 }
 
 function beginPendingPress(panelId, source, grabIndex, event) {
-    debugTouch("BEGIN PENDING PRESS", event);
   gameState.pendingPressPanelId = panelId;
   gameState.pendingPressSource = source;
   gameState.pendingPressGrabIndex = grabIndex;
@@ -1538,9 +1522,9 @@ function clearPendingPress() {
 }
 
 function handlePendingPressMouseMove(event) {
-    debugTouch("PENDING MOVE", event);
   event.preventDefault();
   event.stopPropagation();
+
   if (gameState.pendingPressPanelId === null) {
     return;
   }
@@ -1563,44 +1547,19 @@ function handlePendingPressMouseMove(event) {
 }
 
 function handlePendingPressMouseUp(event) {
-   debugTouch("PENDING UP", event);
+  event.preventDefault();
+  event.stopPropagation();
+
   if (gameState.pendingPressPanelId === null) {
     return;
   }
 
   const panelId = gameState.pendingPressPanelId;
-  const source = gameState.pendingPressSource;
-  const elapsedMs = performance.now() - gameState.pendingPressStartTimeMs;
-
-  let boardOrigin = null;
-  if (source === "board") {
-    const panel = gameState.panels.find((p) => p.id === panelId);
-    if (panel && panel.placed) {
-      boardOrigin = {
-        row: panel.row,
-        col: panel.col,
-        orientation: panel.orientation,
-        reversed: panel.reversed,
-        placementOrder: panel.placementOrder,
-      };
-    }
-  }
 
   clearPendingPress();
-
-  if (elapsedMs <= QUICK_CLICK_MAX_MS) {
-    const rotated = handleRotatePanel(panelId, {
-      source,
-      boardOrigin,
-    });
-
-    if (!rotated) {
-      renderAll();
-    } else {
-      renderAll();
-    }
-  }
+  handleRotatePanel(panelId);
 }
+
 function startPanelMouseDragFromExistingPointer(
   panelId,
   source,
@@ -1792,7 +1751,6 @@ function renderPanelOverlays() {
     }
 
 overlay.addEventListener("pointerdown", (event) => {
-  debugTouch("BOARD PANEL POINTERDOWN", event);
   if (event.button !== 0) {
     return;
   }
@@ -2007,14 +1965,11 @@ function renderPanels() {
     item.appendChild(piece);
 
     item.addEventListener("pointerdown", (event) => {
-        debugTouch("TRAY POINTERDOWN", event);
-
         event.preventDefault();
         event.stopPropagation();
-      // Temporarily comment this out while debugging mobile:
-  //    event.currentTarget.setPointerCapture?.(event.pointerId);
-      //if (event.button !== 0) {
-       // return;
+  // event.currentTarget.setPointerCapture?.(event.pointerId);
+    //  if (event.button !== 0) {
+      //  return;
       //}
 
       startPanelMouseDrag(panel.id, "tray", 1, event);
