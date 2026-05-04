@@ -1279,6 +1279,210 @@
           padding: 8px 12px;
         }
       }
+    /* =========================
+   MOBILE FIT / BOARD METRICS OVERRIDES
+   Put this at the END of the game-specific <style> block.
+   ========================= */
+
+.game-panels {
+  --pg-cell-size: 46px;
+  --pg-cell-gap: 5px;
+  --pg-board-padding: 14px;
+}
+
+/* Make CSS board geometry use variables that JS can also read. */
+.board {
+  grid-template-columns: repeat(11, var(--pg-cell-size));
+  grid-template-rows: repeat(5, var(--pg-cell-size));
+  gap: var(--pg-cell-gap);
+  padding: var(--pg-board-padding);
+}
+
+/* Prevent mobile browsers from stealing panel gestures as page scroll. */
+.board,
+.board-stack,
+.panel-overlays,
+.panel-overlay,
+.panel-overlay *,
+.tray-slot,
+.tray-slot *,
+.tray-piece,
+.tray-piece * {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  touch-action: none;
+}
+
+/* Tablet-ish size */
+@media (max-width: 980px) {
+  .game-panels {
+    --pg-cell-size: 34px;
+    --pg-cell-gap: 4px;
+    --pg-board-padding: 10px;
+  }
+
+  .game-panels .game-shell {
+    width: min(100vw, 760px);
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .board-panel,
+  .side-panel {
+    padding: 12px;
+  }
+
+  .panels-list--tray {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Phone size */
+@media (max-width: 620px) {
+  .game-panels {
+    --pg-cell-size: 25px;
+    --pg-cell-gap: 3px;
+    --pg-board-padding: 8px;
+  }
+
+  .game-panels .game-shell {
+    width: 100vw;
+    max-width: 100vw;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+
+  .game-frame {
+    grid-template-columns: 1fr !important;
+    gap: 0;
+  }
+
+  .game-title-rail {
+    display: none;
+  }
+
+  .game-panel {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .top-bar {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .top-bar-left,
+  .top-bar-right {
+    gap: 8px;
+  }
+
+  .button {
+    padding: 8px 11px;
+    font-size: 0.88rem;
+    border-radius: 13px;
+  }
+
+  .status-pill {
+    padding: 7px 10px;
+    font-size: 0.8rem;
+  }
+
+  .recent-strip-wrap {
+    margin-bottom: 8px;
+  }
+
+  .recent-strip {
+    min-height: 34px;
+    gap: 7px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+  }
+
+  .recent-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .recent-strip__item {
+    padding: 7px 10px;
+    font-size: 0.82rem;
+  }
+
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .board-panel {
+    padding: 10px;
+    border-radius: 22px;
+  }
+
+  .board-wrap {
+    margin-top: 0;
+    padding-top: 0;
+    overflow: visible;
+  }
+
+  .board {
+    border-radius: 22px;
+  }
+
+  .cell {
+    border-radius: 7px;
+    font-size: 0.78rem;
+  }
+
+  .panel-overlay__letter,
+  .tray-piece__letter {
+    font-size: 0.82rem;
+  }
+
+  .side-panel {
+    padding: 10px;
+  }
+
+  .tray-block {
+    margin-top: 8px;
+    padding-top: 10px;
+  }
+
+  .panels-list--tray {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    padding: 8px;
+    min-height: 96px;
+  }
+
+  .tray-slot {
+    min-height: 72px;
+    padding: 6px;
+    border-radius: 15px;
+  }
+}
+
+/* Very narrow phones */
+@media (max-width: 380px) {
+  .game-panels {
+    --pg-cell-size: 24px;
+    --pg-cell-gap: 3px;
+    --pg-board-padding: 7px;
+  }
+
+  .game-panels .game-shell {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+
+  .board-panel {
+    padding: 8px;
+  }
+}
     </style>
   </head>
   <body class="game-panels">
