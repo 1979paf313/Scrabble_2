@@ -1483,6 +1483,150 @@
     padding: 8px;
   }
 }
+/* =========================
+   COMPACT MOBILE HUD
+   Put at END of <style>
+   ========================= */
+
+/* Desktop/tablet default: still clean, but not cramped */
+.recent-strip-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.recent-strip-row .recent-strip-wrap {
+  min-width: 0;
+  margin-bottom: 0;
+}
+
+.recent-strip-row__button {
+  white-space: nowrap;
+}
+
+/* Phone HUD: two tight rows */
+@media (max-width: 620px) {
+  .top-bar--mobile-compact {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 7px;
+  }
+
+  .top-bar--mobile-compact .top-bar-left {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .top-bar--mobile-compact .top-bar-right {
+    display: flex;
+    justify-content: flex-end;
+    min-width: max-content;
+  }
+
+  .top-bar--mobile-compact .button {
+    min-width: 0;
+    width: 100%;
+    padding: 7px 6px;
+    border-radius: 13px;
+    font-size: 0.72rem;
+    line-height: 1.1;
+    white-space: nowrap;
+    letter-spacing: 0;
+  }
+
+  .top-bar--mobile-compact .status-pill {
+    padding: 7px 7px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .recent-strip-row {
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 7px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .recent-strip-row__button {
+    padding: 7px 9px;
+    border-radius: 13px;
+    font-size: 0.72rem;
+    line-height: 1.1;
+  }
+
+  .recent-strip-row .recent-strip-wrap {
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .recent-strip {
+    min-height: 31px;
+    gap: 6px;
+    padding: 1px 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+
+  .recent-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .recent-strip__empty {
+    font-size: 0.74rem;
+    padding-left: 2px;
+  }
+
+  .recent-strip__item {
+    padding: 6px 9px;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    line-height: 1.1;
+  }
+}
+
+/* Extra-tight phones */
+@media (max-width: 380px) {
+  .top-bar--mobile-compact {
+    gap: 5px;
+  }
+
+  .top-bar--mobile-compact .top-bar-left {
+    gap: 5px;
+  }
+
+  .top-bar--mobile-compact .button {
+    padding-left: 5px;
+    padding-right: 5px;
+    font-size: 0.68rem;
+  }
+
+  .top-bar--mobile-compact .status-pill {
+    padding-left: 6px;
+    padding-right: 6px;
+    font-size: 0.68rem;
+  }
+
+  .recent-strip-row {
+    gap: 6px;
+  }
+
+  .recent-strip-row__button {
+    padding-left: 8px;
+    padding-right: 8px;
+    font-size: 0.68rem;
+  }
+}
+      
     </style>
   </head>
   <body class="game-panels">
@@ -1493,30 +1637,33 @@
         </div>
 
         <div class="game-panel">
-          <div class="top-bar">
-            <div class="top-bar-left">
-              <button id="loadPuzzleBtn" class="button button--primary">
-                Load Puzzle
-              </button>
-              <button id="clearBoardBtn" class="button">Clear Board</button>
-              <button id="howToPlayBtn" class="button">How to Play</button>
-            </div>
+        <div class="top-bar top-bar--mobile-compact">
+  <div class="top-bar-left">
+    <button id="loadPuzzleBtn" class="button button--primary">
+      Load Puzzle
+    </button>
+    <button id="clearBoardBtn" class="button">Clear Board</button>
+    <button id="howToPlayBtn" class="button">How to Play</button>
+  </div>
 
-            <div class="top-bar-right">
-              <button
-                id="openAllWordsBtn"
-                class="button button--small"
-                type="button"
-              >
-                View all
-              </button>
-              <div id="foundCountPill" class="status-pill">Found: 0</div>
-            </div>
-          </div>
+  <div class="top-bar-right">
+    <div id="foundCountPill" class="status-pill">Found: 0</div>
+  </div>
+</div>
 
-          <div class="recent-strip-wrap">
-            <div id="recentList" class="recent-strip"></div>
-          </div>
+<div class="recent-strip-row">
+  <button
+    id="openAllWordsBtn"
+    class="button button--small recent-strip-row__button"
+    type="button"
+  >
+    View all
+  </button>
+
+  <div class="recent-strip-wrap">
+    <div id="recentList" class="recent-strip"></div>
+  </div>
+</div>
 
           <div class="layout">
             <section class="panel board-panel">
