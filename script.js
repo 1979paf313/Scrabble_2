@@ -2287,11 +2287,11 @@ function renderStatus() {
   }
 
   if (!gameState.puzzle) {
-    foundCountPillEl.textContent = "Found: 0";
+    foundCountPillEl.textContent = "0 words";
     return;
   }
 
-  foundCountPillEl.textContent = `Found: ${gameState.foundWords.size} / ${gameState.puzzle.allowedWords.length}`;
+  foundCountPillEl.textContent = `${gameState.foundWords.size} / ${gameState.puzzle.allowedWords.length}`;
 }
 
 function renderMessage() {
