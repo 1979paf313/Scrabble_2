@@ -3,10 +3,12 @@ const BOARD_COLS = 11;
 const MIDDLE_ROW = 2;
 const CENTER_ROW = 2;
 const CENTER_COL = 5;
-const CELL_SIZE = 46;
-const CELL_GAP = 5;
-const BOARD_PADDING = 14;
-const CELL_STEP = CELL_SIZE + CELL_GAP;
+
+let CELL_SIZE = 46;
+let CELL_GAP = 5;
+let BOARD_PADDING = 14;
+let CELL_STEP = CELL_SIZE + CELL_GAP;
+
 const QUICK_CLICK_MAX_MS = 180;
 const QUICK_CLICK_MAX_MOVE_PX = 6;
 const PENDING_DRAG_START_MOVE_PX = 6;
@@ -87,6 +89,42 @@ allWordsModalBackdropEl.addEventListener("click", closeAllWordsModal);
 howToPlayBtn.addEventListener("click", openHowToPlay);
 howToPlayBackdropEl.addEventListener("click", closeHowToPlay);
 
+function readCssPixelVar(element, varName, fallbackValue) {
+  const rawValue = getComputedStyle(element).getPropertyValue(varName).trim();
+
+  if (!rawValue) {
+    return fallbackValue;
+  }
+
+  const parsed = Number.parseFloat(rawValue);
+
+  if (!Number.isFinite(parsed)) {
+    return fallbackValue;
+  }
+
+  return parsed;
+}
+
+function syncBoardMetricsFromCss() {
+  const metricSourceEl = document.body.classList.contains("game-panels")
+    ? document.body
+    : document.querySelector(".game-panels");
+
+  if (!metricSourceEl) {
+    return;
+  }
+
+  CELL_SIZE = readCssPixelVar(metricSourceEl, "--pg-cell-size", 46);
+  CELL_GAP = readCssPixelVar(metricSourceEl, "--pg-cell-gap", 5);
+  BOARD_PADDING = readCssPixelVar(metricSourceEl, "--pg-board-padding", 14);
+  CELL_STEP = CELL_SIZE + CELL_GAP;
+}
+
+function handleViewportResize() {
+  syncBoardMetricsFromCss();
+  renderAll();
+}
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !allWordsModalEl.classList.contains("hidden")) {
     closeAllWordsModal();
@@ -98,6 +136,9 @@ document.addEventListener("keydown", (event) => {
     closeHowToPlay();
   }
 });
+
+syncBoardMetricsFromCss();
+window.addEventListener("resize", handleViewportResize);
 
 createEmptyBoardState();
 renderAll();
@@ -241,6 +282,8 @@ function getPanelCells(panel) {
 }
 
 function getPanelOverlayStyle(panel) {
+  syncBoardMetricsFromCss();
+
   const isHorizontal = panel.orientation === "horizontal";
 
   const left = BOARD_PADDING + panel.col * CELL_STEP;
@@ -274,6 +317,8 @@ function getPanelSegmentBoardPosition(
 }
 
 function getPreviewOverlayStyle(panel, anchorRow, anchorCol) {
+  syncBoardMetricsFromCss();
+
   const isHorizontal = panel.orientation === "horizontal";
 
   const left = BOARD_PADDING + anchorCol * CELL_STEP;
@@ -1343,6 +1388,7 @@ function showError(message) {
 }
 
 function renderAll() {
+  syncBoardMetricsFromCss();
   renderBoard();
   renderPanelOverlays();
   renderPanels();
@@ -1355,16 +1401,34 @@ function renderAll() {
   renderFoundWordToast();
 }
 
-function getCellCoordsFromEventTarget(target) {
-  const cellEl = target.closest(".cell");
-  if (!cellEl || !boardEl.contains(cellEl)) {
+function getCellCoordsFromPoint(clientX, clientY) {
+  syncBoardMetricsFromCss();
+
+  const rect = boardEl.getBoundingClientRect();
+
+  const localX = clientX - rect.left - BOARD_PADDING;
+  const localY = clientY - rect.top - BOARD_PADDING;
+
+  const totalGridWidth = BOARD_COLS * CELL_SIZE + (BOARD_COLS - 1) * CELL_GAP;
+  const totalGridHeight = BOARD_ROWS * CELL_SIZE + (BOARD_ROWS - 1) * CELL_GAP;
+
+  if (
+    localX < -CELL_GAP ||
+    localY < -CELL_GAP ||
+    localX > totalGridWidth + CELL_GAP ||
+    localY > totalGridHeight + CELL_GAP
+  ) {
     return null;
   }
 
-  const row = Number(cellEl.dataset.row);
-  const col = Number(cellEl.dataset.col);
+  const col = Math.round(localX / CELL_STEP);
+  const row = Math.round(localY / CELL_STEP);
 
   if (!Number.isInteger(row) || !Number.isInteger(col)) {
+    return null;
+  }
+
+  if (!isInBounds(row, col)) {
     return null;
   }
 
