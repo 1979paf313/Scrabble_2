@@ -2008,10 +2008,14 @@ function renderPanels() {
 
     item.addEventListener("pointerdown", (event) => {
         debugTouch("TRAY POINTERDOWN", event);
-      event.currentTarget.setPointerCapture?.(event.pointerId);
-      if (event.button !== 0) {
-        return;
-      }
+
+        event.preventDefault();
+        event.stopPropagation();
+      // Temporarily comment this out while debugging mobile:
+  //    event.currentTarget.setPointerCapture?.(event.pointerId);
+      //if (event.button !== 0) {
+       // return;
+      //}
 
       startPanelMouseDrag(panel.id, "tray", 1, event);
     });
