@@ -1555,9 +1555,35 @@ function handlePendingPressMouseUp(event) {
   }
 
   const panelId = gameState.pendingPressPanelId;
+  const source = gameState.pendingPressSource;
+  const elapsedMs = performance.now() - gameState.pendingPressStartTimeMs;
+
+  let boardOrigin = null;
+
+  if (source === "board") {
+    const panel = gameState.panels.find((p) => p.id === panelId);
+
+    if (panel && panel.placed) {
+      boardOrigin = {
+        row: panel.row,
+        col: panel.col,
+        orientation: panel.orientation,
+        reversed: panel.reversed,
+        placementOrder: panel.placementOrder,
+      };
+    }
+  }
 
   clearPendingPress();
-  handleRotatePanel(panelId);
+
+  if (elapsedMs <= QUICK_CLICK_MAX_MS) {
+    handleRotatePanel(panelId, {
+      source,
+      boardOrigin,
+    });
+
+    renderAll();
+  }
 }
 
 function startPanelMouseDragFromExistingPointer(
